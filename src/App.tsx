@@ -1,0 +1,82 @@
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
+import { LoginPage } from "@/features/auth/LoginPage";
+import { ProtectedRoute } from "@/routes/ProtectedRoute";
+
+const RegisterPage = lazy(() =>
+  import("@/features/auth/RegisterPage").then((m) => ({ default: m.RegisterPage })),
+);
+const RoleBasedHome = lazy(() =>
+  import("@/routes/RoleBasedHome").then((m) => ({ default: m.RoleBasedHome })),
+);
+const EventDetailsPage = lazy(() =>
+  import("@/features/events/EventDetailsPage").then((m) => ({ default: m.EventDetailsPage })),
+);
+const MyEventsPage = lazy(() =>
+  import("@/features/events/MyEventsPage").then((m) => ({ default: m.MyEventsPage })),
+);
+const AdminDashboardPage = lazy(() =>
+  import("@/features/admin/AdminDashboardPage").then((m) => ({ default: m.AdminDashboardPage })),
+);
+
+function RouteLoadingFallback() {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <p className="text-sm text-white/40">جارٍ التحميل...</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<RouteLoadingFallback />}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <RoleBasedHome />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/events/:id"
+            element={
+              <ProtectedRoute>
+                <EventDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/my-events"
+            element={
+              <ProtectedRoute>
+                <MyEventsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+
+export default App;
