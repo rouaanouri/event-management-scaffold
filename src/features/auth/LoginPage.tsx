@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { login } from "@/api/auth";
@@ -12,6 +13,7 @@ interface FieldErrors {
 }
 
 export function LoginPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const setSession = useAuthStore((s) => s.setSession);
@@ -43,9 +45,7 @@ export function LoginPage() {
       const ok = setSession(access_token);
 
       if (!ok) {
-        setServerError(
-          "نجح تسجيل الدخول، لكن حدث خطأ أثناء قراءة بيانات الحساب. حاول مرة أخرى.",
-        );
+        setServerError(t("auth.sessionReadError"));
         return;
       }
 
@@ -67,17 +67,13 @@ export function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md rounded-2xl border border-surface-border bg-surface-card/80 p-10 shadow-2xl backdrop-blur">
-        <h1 className="mb-2 text-3xl font-extrabold text-white">
-          تسجيل الدخول
-        </h1>
-        <p className="mb-8 text-base text-white/50">
-          أهلاً بعودتك، أدخل بياناتك للمتابعة
-        </p>
+        <h1 className="mb-2 text-3xl font-extrabold text-white">{t("auth.loginTitle")}</h1>
+        <p className="mb-8 text-base text-white/50">{t("auth.loginSubtitle")}</p>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <div>
             <label htmlFor="email" className={labelClass}>
-              البريد الإلكتروني
+              {t("auth.email")}
             </label>
             <input
               id="email"
@@ -97,7 +93,7 @@ export function LoginPage() {
 
           <div>
             <label htmlFor="password" className={labelClass}>
-              كلمة المرور
+              {t("auth.password")}
             </label>
             <input
               id="password"
@@ -131,14 +127,14 @@ export function LoginPage() {
             disabled={isSubmitting}
             className="w-full rounded-xl bg-brand-500 py-3.5 text-base font-bold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isSubmitting ? "جارٍ تسجيل الدخول..." : "تسجيل الدخول"}
+            {isSubmitting ? t("auth.loginLoading") : t("auth.loginButton")}
           </button>
         </form>
 
         <p className="mt-6 text-center text-base text-white/50">
-          ليس لديك حساب؟{" "}
+          {t("auth.noAccount")}{" "}
           <Link to="/register" className="font-semibold text-brand-300 hover:text-brand-100">
-            إنشاء حساب جديد
+            {t("auth.createAccount")}
           </Link>
         </p>
       </div>

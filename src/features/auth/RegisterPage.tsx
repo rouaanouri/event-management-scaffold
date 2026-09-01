@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
 import { login, register } from "@/api/auth";
@@ -33,6 +34,7 @@ const initialState: FormState = {
 };
 
 export function RegisterPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const setSession = useAuthStore((s) => s.setSession);
 
@@ -47,12 +49,12 @@ export function RegisterPage() {
 
   function validate(): boolean {
     const errors: FieldErrors = {
-      firstName: validateRequired(form.firstName, "الاسم الأول") ?? undefined,
-      lastName: validateRequired(form.lastName, "اسم العائلة") ?? undefined,
+      firstName: validateRequired(form.firstName, t("auth.firstName")) ?? undefined,
+      lastName: validateRequired(form.lastName, t("auth.lastName")) ?? undefined,
       email: validateEmail(form.email) ?? undefined,
       password: validatePassword(form.password) ?? undefined,
       dateOfBirth: validateDateOfBirth(form.dateOfBirth) ?? undefined,
-      gender: form.gender ? undefined : "يجب اختيار الجنس",
+      gender: form.gender ? undefined : t("validation.genderRequired"),
     };
     setFieldErrors(errors);
     return Object.values(errors).every((e) => !e);
@@ -102,18 +104,14 @@ export function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12">
       <div className="w-full max-w-2xl rounded-2xl border border-surface-border bg-surface-card/80 p-10 shadow-2xl backdrop-blur">
-        <h1 className="mb-2 text-3xl font-extrabold text-white">
-          إنشاء حساب جديد
-        </h1>
-        <p className="mb-8 text-base text-white/50">
-          انضم إلينا وابدأ باستكشاف الفعاليات
-        </p>
+        <h1 className="mb-2 text-3xl font-extrabold text-white">{t("auth.registerTitle")}</h1>
+        <p className="mb-8 text-base text-white/50">{t("auth.registerSubtitle")}</p>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>
               <label htmlFor="firstName" className={labelClass}>
-                الاسم الأول
+                {t("auth.firstName")}
               </label>
               <input
                 id="firstName"
@@ -127,7 +125,7 @@ export function RegisterPage() {
             </div>
             <div>
               <label htmlFor="lastName" className={labelClass}>
-                اسم العائلة
+                {t("auth.lastName")}
               </label>
               <input
                 id="lastName"
@@ -143,7 +141,7 @@ export function RegisterPage() {
 
           <div>
             <label htmlFor="email" className={labelClass}>
-              البريد الإلكتروني
+              {t("auth.email")}
             </label>
             <input
               id="email"
@@ -157,7 +155,7 @@ export function RegisterPage() {
 
           <div>
             <label htmlFor="password" className={labelClass}>
-              كلمة المرور
+              {t("auth.password")}
             </label>
             <input
               id="password"
@@ -174,7 +172,7 @@ export function RegisterPage() {
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>
               <label htmlFor="dateOfBirth" className={labelClass}>
-                تاريخ الميلاد
+                {t("auth.dateOfBirth")}
               </label>
               <input
                 id="dateOfBirth"
@@ -189,7 +187,7 @@ export function RegisterPage() {
             </div>
             <div>
               <label htmlFor="gender" className={labelClass}>
-                الجنس
+                {t("auth.gender")}
               </label>
               <select
                 id="gender"
@@ -199,10 +197,10 @@ export function RegisterPage() {
                 }
                 className={`${inputClass} [color-scheme:dark]`}
               >
-                <option value="">اختر...</option>
-                <option value="FEMALE">أنثى</option>
-                <option value="MALE">ذكر</option>
-                <option value="OTHER">تفضيل عدم التحديد</option>
+                <option value="">{t("auth.genderSelect")}</option>
+                <option value="FEMALE">{t("auth.genderFemale")}</option>
+                <option value="MALE">{t("auth.genderMale")}</option>
+                <option value="OTHER">{t("auth.genderOther")}</option>
               </select>
               {fieldErrors.gender && (
                 <p className={errorClass}>{fieldErrors.gender}</p>
@@ -211,10 +209,7 @@ export function RegisterPage() {
           </div>
 
           {serverError && (
-            <p
-              role="alert"
-              className="rounded-xl bg-danger-bg px-4 py-3 text-sm text-danger-text"
-            >
+            <p role="alert" className="rounded-xl bg-danger-bg px-4 py-3 text-sm text-danger-text">
               {serverError}
             </p>
           )}
@@ -224,14 +219,14 @@ export function RegisterPage() {
             disabled={isSubmitting}
             className="w-full rounded-xl bg-brand-500 py-3.5 text-base font-bold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isSubmitting ? "جارٍ إنشاء الحساب..." : "إنشاء حساب"}
+            {isSubmitting ? t("auth.registerLoading") : t("auth.registerButton")}
           </button>
         </form>
 
         <p className="mt-6 text-center text-base text-white/50">
-          هل لديك حساب بالفعل؟{" "}
+          {t("auth.haveAccount")}{" "}
           <Link to="/login" className="font-semibold text-brand-300 hover:text-brand-100">
-            تسجيل الدخول
+            {t("auth.loginButton")}
           </Link>
         </p>
       </div>

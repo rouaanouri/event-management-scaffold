@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import { getUpcomingEvents } from "@/api/events";
 import { EventCard } from "@/components/events/EventCard";
 import { EventsFilterBar } from "@/components/events/EventsFilterBar";
+import { Footer } from "@/components/layout/Footer";
 import { NavBar } from "@/components/layout/NavBar";
 import { PaginationControls } from "@/components/layout/PaginationControls";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -14,6 +16,7 @@ import type { EventType } from "@/types";
 const PAGE_SIZE = 12;
 
 export function UpcomingEventsPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -36,10 +39,15 @@ export function UpcomingEventsPage() {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <NavBar />
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <h1 className="mb-8 text-3xl font-extrabold text-white">الفعاليات القادمة</h1>
+      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+        <h1 className="mb-2 text-3xl font-extrabold text-white">{t("events.pageTitle")}</h1>
+        {result && (
+          <p className="mb-6 text-sm text-white/50">
+            {t("events.summary", { count: result.total })}
+          </p>
+        )}
 
         <EventsFilterBar
           search={search}
@@ -53,7 +61,7 @@ export function UpcomingEventsPage() {
         />
 
         {isLoading && (
-          <p className="py-12 text-center text-sm text-white/40">جارٍ تحميل الفعاليات...</p>
+          <p className="py-12 text-center text-sm text-white/40">{t("events.loading")}</p>
         )}
 
         {isError && (
@@ -63,9 +71,7 @@ export function UpcomingEventsPage() {
         )}
 
         {!isLoading && !isError && result && result.items.length === 0 && (
-          <p className="py-12 text-center text-sm text-white/40">
-            لا توجد فعاليات مطابقة لمعايير البحث الحالية.
-          </p>
+          <p className="py-12 text-center text-sm text-white/40">{t("events.empty")}</p>
         )}
 
         {!isLoading && !isError && result && result.items.length > 0 && (
@@ -84,6 +90,7 @@ export function UpcomingEventsPage() {
           </>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

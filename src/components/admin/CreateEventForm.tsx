@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { createEvent } from "@/api/admin";
 import { getApiErrorMessage } from "@/lib/errors";
@@ -29,6 +30,7 @@ const initialState: FormState = {
 type FieldErrors = Partial<Record<keyof FormState, string>>;
 
 export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<FormState>(initialState);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -41,14 +43,14 @@ export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
   function validate(): boolean {
     const maxAttendeesNumber = Number(form.maxAttendees);
     const errors: FieldErrors = {
-      name: validateRequired(form.name, "اسم الفعالية") ?? undefined,
-      description: validateRequired(form.description, "الوصف") ?? undefined,
+      name: validateRequired(form.name, t("admin.eventName")) ?? undefined,
+      description: validateRequired(form.description, t("admin.eventDescription")) ?? undefined,
       maxAttendees:
         !form.maxAttendees.trim() || maxAttendeesNumber <= 0
-          ? "يجب إدخال رقم صحيح أكبر من صفر"
+          ? t("validation.eventMaxAttendeesInvalid")
           : undefined,
-      eventDate: !form.eventDate ? "تاريخ الفعالية مطلوب" : undefined,
-      eventType: !form.eventType ? "يجب اختيار نوع الفعالية" : undefined,
+      eventDate: !form.eventDate ? t("validation.eventDateRequired") : undefined,
+      eventType: !form.eventType ? t("validation.eventTypeRequired") : undefined,
     };
     setFieldErrors(errors);
     return Object.values(errors).every((e) => !e);
@@ -90,11 +92,11 @@ export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
       noValidate
       className="mb-6 space-y-4 rounded-2xl border border-surface-border bg-surface-card p-6"
     >
-      <h2 className="text-lg font-bold text-white">إنشاء فعالية جديدة</h2>
+      <h2 className="text-lg font-bold text-white">{t("admin.createFormTitle")}</h2>
 
       <div>
         <label htmlFor="event-name" className={labelClass}>
-          اسم الفعالية
+          {t("admin.eventName")}
         </label>
         <input
           id="event-name"
@@ -107,7 +109,7 @@ export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
 
       <div>
         <label htmlFor="event-description" className={labelClass}>
-          الوصف
+          {t("admin.eventDescription")}
         </label>
         <textarea
           id="event-description"
@@ -124,7 +126,7 @@ export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div>
           <label htmlFor="event-max-attendees" className={labelClass}>
-            الحد الأقصى للحضور
+            {t("admin.eventMaxAttendees")}
           </label>
           <input
             id="event-max-attendees"
@@ -141,7 +143,7 @@ export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
 
         <div>
           <label htmlFor="event-date" className={labelClass}>
-            تاريخ ووقت الفعالية
+            {t("admin.eventDateTime")}
           </label>
           <input
             id="event-date"
@@ -157,7 +159,7 @@ export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
 
         <div>
           <label htmlFor="event-type" className={labelClass}>
-            نوع الفعالية
+            {t("admin.eventType")}
           </label>
           <select
             id="event-type"
@@ -165,10 +167,10 @@ export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
             onChange={(e) => updateField("eventType", e.target.value as EventType | "")}
             className={inputClass}
           >
-            <option value="">اختر...</option>
-            <option value="CONFERENCE">مؤتمر</option>
-            <option value="WEBINAR">ندوة عبر الإنترنت</option>
-            <option value="WORKSHOP">ورشة عمل</option>
+            <option value="">{t("admin.eventTypeSelect")}</option>
+            <option value="CONFERENCE">{t("eventTypes.CONFERENCE")}</option>
+            <option value="WEBINAR">{t("eventTypes.WEBINAR")}</option>
+            <option value="WORKSHOP">{t("eventTypes.WORKSHOP")}</option>
           </select>
           {fieldErrors.eventType && (
             <p className={errorClass}>{fieldErrors.eventType}</p>
@@ -188,14 +190,14 @@ export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
           disabled={isSubmitting}
           className="rounded-xl bg-brand-500 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? "جارٍ الإنشاء..." : "إنشاء الفعالية"}
+          {isSubmitting ? t("admin.createLoading") : t("admin.createSubmit")}
         </button>
         <button
           type="button"
           onClick={onCancel}
           className="rounded-xl border border-surface-border px-6 py-2.5 text-sm font-medium text-white/70 transition hover:text-white"
         >
-          إلغاء
+          {t("admin.cancel")}
         </button>
       </div>
     </form>

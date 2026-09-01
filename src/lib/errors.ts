@@ -1,5 +1,6 @@
 import { AxiosError } from "axios";
 
+import i18n from "@/i18n";
 import type { ApiErrorResponse } from "@/types";
 
 export function getApiErrorMessage(error: unknown): string {
@@ -14,13 +15,13 @@ export function getApiErrorMessage(error: unknown): string {
     }
 
     if (error.response) {
-      return `فشل الطلب برمز الحالة ${error.response.status}.`;
+      return i18n.t("errors.statusFailure", { status: error.response.status });
     }
 
     if (error.request) {
-      return "لم يصل أي رد من الخادم. راجع إعدادات CORS على الخادم أو حالة الاتصال.";
+      return i18n.t("errors.noResponse");
     }
   }
 
-  return "حدث خطأ غير متوقع. حاول مرة أخرى.";
+  return i18n.t("errors.unexpected");
 }

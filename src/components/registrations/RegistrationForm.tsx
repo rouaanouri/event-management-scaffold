@@ -1,17 +1,9 @@
 import { type FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { registerForEvent } from "@/api/registrations";
 import { getApiErrorMessage } from "@/lib/errors";
 import type { CreateRegistrationPayload, EducationLevel } from "@/types";
-
-const educationLevelOptions: { value: EducationLevel | ""; label: string }[] = [
-  { value: "", label: "تفضيل عدم التحديد" },
-  { value: "HIGH_SCHOOL", label: "شهادة ثانوية" },
-  { value: "BACHELORS", label: "بكالوريوس" },
-  { value: "MASTERS", label: "ماجستير" },
-  { value: "PHD", label: "دكتوراه" },
-  { value: "OTHER", label: "مؤهل آخر" },
-];
 
 interface RegistrationFormProps {
   eventId: number;
@@ -19,12 +11,22 @@ interface RegistrationFormProps {
 }
 
 export function RegistrationForm({ eventId, onSuccess }: RegistrationFormProps) {
+  const { t } = useTranslation();
   const [linkedinProfile, setLinkedinProfile] = useState("");
   const [educationLevel, setEducationLevel] = useState<EducationLevel | "">("");
   const [motivation, setMotivation] = useState("");
   const [linkedinError, setLinkedinError] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const educationLevelOptions: { value: EducationLevel | ""; label: string }[] = [
+    { value: "", label: t("educationLevels.none") },
+    { value: "HIGH_SCHOOL", label: t("educationLevels.HIGH_SCHOOL") },
+    { value: "BACHELORS", label: t("educationLevels.BACHELORS") },
+    { value: "MASTERS", label: t("educationLevels.MASTERS") },
+    { value: "PHD", label: t("educationLevels.PHD") },
+    { value: "OTHER", label: t("educationLevels.OTHER") },
+  ];
 
   function validateLinkedin(): boolean {
     if (!linkedinProfile.trim()) {
@@ -34,13 +36,13 @@ export function RegistrationForm({ eventId, onSuccess }: RegistrationFormProps) 
     try {
       const url = new URL(linkedinProfile.trim());
       if (!url.hostname.includes("linkedin.com")) {
-        setLinkedinError("يجب أن يكون الرابط من موقع LinkedIn");
+        setLinkedinError(t("validation.linkedinDomain"));
         return false;
       }
       setLinkedinError(null);
       return true;
     } catch {
-      setLinkedinError("صيغة الرابط غير صحيحة");
+      setLinkedinError(t("validation.linkedinInvalid"));
       return false;
     }
   }
@@ -76,7 +78,7 @@ export function RegistrationForm({ eventId, onSuccess }: RegistrationFormProps) 
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <div>
         <label htmlFor="linkedinProfile" className={labelClass}>
-          رابط الملف الشخصي على LinkedIn (اختياري)
+          {t("registrationForm.linkedinLabel")}
         </label>
         <input
           id="linkedinProfile"
@@ -91,7 +93,7 @@ export function RegistrationForm({ eventId, onSuccess }: RegistrationFormProps) 
 
       <div>
         <label htmlFor="educationLevel" className={labelClass}>
-          المستوى التعليمي (اختياري)
+          {t("registrationForm.educationLabel")}
         </label>
         <select
           id="educationLevel"
@@ -109,7 +111,7 @@ export function RegistrationForm({ eventId, onSuccess }: RegistrationFormProps) 
 
       <div>
         <label htmlFor="motivation" className={labelClass}>
-          سبب الرغبة في الحضور (اختياري)
+          {t("registrationForm.motivationLabel")}
         </label>
         <textarea
           id="motivation"
@@ -131,7 +133,7 @@ export function RegistrationForm({ eventId, onSuccess }: RegistrationFormProps) 
         disabled={isSubmitting}
         className="w-full rounded-xl bg-brand-500 py-3.5 text-base font-bold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isSubmitting ? "جارٍ إرسال طلب التسجيل..." : "تسجيل في الفعالية"}
+        {isSubmitting ? t("registrationForm.submitLoading") : t("registrationForm.submit")}
       </button>
     </form>
   );

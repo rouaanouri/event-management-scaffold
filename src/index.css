@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
-
+/*
+ * نظام الهوية البصرية مستمَدّ من موقع Digit (digit-sy.com): خلفية داكنة
+ * بتدرّج بنفسجي عميق، بنفسجي زاهٍ كلون أساسي للأزرار والعناصر التفاعلية،
+ * أخضر لشارات الحالة الإيجابية، وخط Cairo العربي الهندسي العريض للعناوين.
+ */
 @theme {
   --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
 
@@ -24,8 +28,7 @@
 }
 
 body {
-  background: radial-gradient(ellipse at top, #2d1155 0%, #150c28 45%, #0a0612 100%)
-    fixed;
+  background-color: #0a0612;
   color: #f5f3ff;
   min-height: 100vh;
 }

@@ -1,6 +1,8 @@
 import { lazy, Suspense } from "react";
+import { useTranslation } from "react-i18next";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import { SiteBackdrop } from "@/components/layout/SiteBackdrop";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 
@@ -21,9 +23,10 @@ const AdminDashboardPage = lazy(() =>
 );
 
 function RouteLoadingFallback() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <p className="text-sm text-white/40">جارٍ التحميل...</p>
+      <p className="text-sm text-white/40">{t("common.loadingPage")}</p>
     </div>
   );
 }
@@ -31,6 +34,7 @@ function RouteLoadingFallback() {
 function App() {
   return (
     <BrowserRouter>
+      <SiteBackdrop />
       <Suspense fallback={<RouteLoadingFallback />}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

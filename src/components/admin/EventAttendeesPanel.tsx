@@ -1,16 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { approveRegistration, getEventAttendees } from "@/api/admin";
 import { PaginationControls } from "@/components/layout/PaginationControls";
 import { getApiErrorMessage } from "@/lib/errors";
-import type { AttendeeEntry } from "@/types";
-
-const statusLabels: Record<AttendeeEntry["status"], string> = {
-  PENDING: "قيد المراجعة",
-  APPROVED: "مقبول",
-  REJECTED: "مرفوض",
-};
 
 interface EventAttendeesPanelProps {
   eventId: number;
@@ -18,6 +12,7 @@ interface EventAttendeesPanelProps {
 }
 
 export function EventAttendeesPanel({ eventId, onClose }: EventAttendeesPanelProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
 
@@ -37,18 +32,18 @@ export function EventAttendeesPanel({ eventId, onClose }: EventAttendeesPanelPro
   return (
     <div className="mb-6 rounded-2xl border border-surface-border bg-surface-card p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-white">المسجلون في الفعالية</h2>
+        <h2 className="text-lg font-bold text-white">{t("admin.attendeesTitle")}</h2>
         <button
           type="button"
           onClick={onClose}
           className="text-sm font-medium text-brand-300 hover:text-brand-100"
         >
-          إغلاق
+          {t("admin.close")}
         </button>
       </div>
 
       {isLoading && (
-        <p className="py-8 text-center text-sm text-white/40">جارٍ تحميل قائمة المسجلين...</p>
+        <p className="py-8 text-center text-sm text-white/40">{t("admin.attendeesLoading")}</p>
       )}
 
       {isError && (
@@ -64,7 +59,7 @@ export function EventAttendeesPanel({ eventId, onClose }: EventAttendeesPanelPro
       )}
 
       {!isLoading && !isError && result && result.attendees.length === 0 && (
-        <p className="py-8 text-center text-sm text-white/40">لا يوجد مسجلون في هذه الفعالية بعد.</p>
+        <p className="py-8 text-center text-sm text-white/40">{t("admin.attendeesEmpty")}</p>
       )}
 
       {!isLoading && !isError && result && result.attendees.length > 0 && (
@@ -78,7 +73,9 @@ export function EventAttendeesPanel({ eventId, onClose }: EventAttendeesPanelPro
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-white">{attendee.user.email}</p>
                   <p className="mt-1 text-xs text-white/50">
-                    {attendee.education_level && <>المستوى التعليمي: {attendee.education_level} · </>}
+                    {attendee.education_level && (
+                      <>{t("admin.educationLevelPrefix")}: {t(`educationLevels.${attendee.education_level}`)} · </>
+                    )}
                     {attendee.linkedin_profile && (
                       <a
                         href={attendee.linkedin_profile}
@@ -86,7 +83,7 @@ export function EventAttendeesPanel({ eventId, onClose }: EventAttendeesPanelPro
                         rel="noreferrer"
                         className="text-brand-300 hover:text-brand-100"
                       >
-                        رابط LinkedIn
+                        {t("admin.linkedinLink")}
                       </a>
                     )}
                   </p>
@@ -105,7 +102,7 @@ export function EventAttendeesPanel({ eventId, onClose }: EventAttendeesPanelPro
                           : "bg-white/10 text-white/60"
                     }`}
                   >
-                    {statusLabels[attendee.status]}
+                    {t(`registrationStatus.${attendee.status}`)}
                   </span>
 
                   {attendee.status === "PENDING" && (
@@ -115,7 +112,7 @@ export function EventAttendeesPanel({ eventId, onClose }: EventAttendeesPanelPro
                       disabled={approveMutation.isPending}
                       className="rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:opacity-60"
                     >
-                      {approveMutation.isPending ? "جارٍ القبول..." : "قبول"}
+                      {approveMutation.isPending ? t("admin.approving") : t("admin.approve")}
                     </button>
                   )}
                 </div>

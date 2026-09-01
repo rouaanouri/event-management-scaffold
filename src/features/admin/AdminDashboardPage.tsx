@@ -1,12 +1,14 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarDays, Layers, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { deleteEvent, getAllEvents } from "@/api/admin";
 import { AdminEventRow } from "@/components/admin/AdminEventRow";
 import { CreateEventForm } from "@/components/admin/CreateEventForm";
 import { EventAttendeesPanel } from "@/components/admin/EventAttendeesPanel";
 import { EventsFilterBar } from "@/components/events/EventsFilterBar";
+import { Footer } from "@/components/layout/Footer";
 import { NavBar } from "@/components/layout/NavBar";
 import { PaginationControls } from "@/components/layout/PaginationControls";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -16,6 +18,7 @@ import type { EventType } from "@/types";
 const PAGE_SIZE = 10;
 
 export function AdminDashboardPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -57,18 +60,18 @@ export function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <NavBar />
-      <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-3xl font-extrabold text-white">لوحة تحكم الإدارة</h1>
+          <h1 className="text-3xl font-extrabold text-white">{t("admin.pageTitle")}</h1>
           <button
             type="button"
             onClick={() => setShowCreateForm((prev) => !prev)}
             className="flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-600"
           >
             <Plus size={18} />
-            {showCreateForm ? "إغلاق نموذج الإنشاء" : "إنشاء فعالية جديدة"}
+            {showCreateForm ? t("admin.createToggleClose") : t("admin.createToggleOpen")}
           </button>
         </div>
 
@@ -79,7 +82,7 @@ export function AdminDashboardPage() {
                 <Layers size={20} />
               </div>
               <div>
-                <p className="text-xs text-white/50">إجمالي الفعاليات</p>
+                <p className="text-xs text-white/50">{t("admin.statTotalEvents")}</p>
                 <p className="text-xl font-bold text-white">{result.total}</p>
               </div>
             </div>
@@ -89,9 +92,9 @@ export function AdminDashboardPage() {
                 <CalendarDays size={20} />
               </div>
               <div>
-                <p className="text-xs text-white/50">الصفحة الحالية</p>
+                <p className="text-xs text-white/50">{t("admin.statCurrentPage")}</p>
                 <p className="text-xl font-bold text-white">
-                  {result.page} من {result.totalPages}
+                  {t("admin.statPageOf", { page: result.page, total: result.totalPages })}
                 </p>
               </div>
             </div>
@@ -126,7 +129,7 @@ export function AdminDashboardPage() {
           onDateToChange={setDateTo}
         />
 
-        <h2 className="mb-4 text-lg font-bold text-white/90">قائمة الفعاليات</h2>
+        <h2 className="mb-4 text-lg font-bold text-white/90">{t("admin.listTitle")}</h2>
 
         {deleteErrorMessage && (
           <p role="alert" className="mb-4 rounded-xl bg-danger-bg px-4 py-3 text-sm text-danger-text">
@@ -135,7 +138,7 @@ export function AdminDashboardPage() {
         )}
 
         {isLoading && (
-          <p className="py-12 text-center text-sm text-white/40">جارٍ تحميل الفعاليات...</p>
+          <p className="py-12 text-center text-sm text-white/40">{t("admin.loading")}</p>
         )}
 
         {isError && (
@@ -145,7 +148,7 @@ export function AdminDashboardPage() {
         )}
 
         {!isLoading && !isError && result && result.items.length === 0 && (
-          <p className="py-12 text-center text-sm text-white/40">لا توجد فعاليات مطابقة.</p>
+          <p className="py-12 text-center text-sm text-white/40">{t("admin.empty")}</p>
         )}
 
         {!isLoading && !isError && result && result.items.length > 0 && (
@@ -165,6 +168,7 @@ export function AdminDashboardPage() {
           </>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

@@ -1,11 +1,7 @@
-import type { EventType } from "@/types";
+import { RotateCcw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-const eventTypeOptions: { value: EventType | ""; label: string }[] = [
-  { value: "", label: "كل الأنواع" },
-  { value: "CONFERENCE", label: "مؤتمر" },
-  { value: "WEBINAR", label: "ندوة عبر الإنترنت" },
-  { value: "WORKSHOP", label: "ورشة عمل" },
-];
+import type { EventType } from "@/types";
 
 interface EventsFilterBarProps {
   search: string;
@@ -28,6 +24,24 @@ export function EventsFilterBar({
   dateTo,
   onDateToChange,
 }: EventsFilterBarProps) {
+  const { t } = useTranslation();
+
+  const eventTypeOptions: { value: EventType | ""; label: string }[] = [
+    { value: "", label: t("eventTypes.all") },
+    { value: "CONFERENCE", label: t("eventTypes.CONFERENCE") },
+    { value: "WEBINAR", label: t("eventTypes.WEBINAR") },
+    { value: "WORKSHOP", label: t("eventTypes.WORKSHOP") },
+  ];
+
+  const hasActiveFilters = Boolean(search || type || dateFrom || dateTo);
+
+  function handleReset() {
+    onSearchChange("");
+    onTypeChange("");
+    onDateFromChange("");
+    onDateToChange("");
+  }
+
   const inputClass =
     "w-full rounded-xl border border-surface-border bg-surface-raised px-3.5 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 [color-scheme:dark]";
   const labelClass = "mb-1.5 block text-xs font-medium text-white/60";
@@ -37,12 +51,12 @@ export function EventsFilterBar({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-2">
           <label htmlFor="search" className={labelClass}>
-            البحث
+            {t("events.searchLabel")}
           </label>
           <input
             id="search"
             type="search"
-            placeholder="البحث بالاسم أو الوصف..."
+            placeholder={t("events.searchPlaceholder")}
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             className={inputClass}
@@ -51,7 +65,7 @@ export function EventsFilterBar({
 
         <div>
           <label htmlFor="event-type" className={labelClass}>
-            نوع الفعالية
+            {t("events.typeLabel")}
           </label>
           <select
             id="event-type"
@@ -70,7 +84,7 @@ export function EventsFilterBar({
         <div className="grid grid-cols-2 gap-2">
           <div>
             <label htmlFor="date-from" className={labelClass}>
-              من تاريخ
+              {t("events.dateFromLabel")}
             </label>
             <input
               id="date-from"
@@ -82,7 +96,7 @@ export function EventsFilterBar({
           </div>
           <div>
             <label htmlFor="date-to" className={labelClass}>
-              إلى تاريخ
+              {t("events.dateToLabel")}
             </label>
             <input
               id="date-to"
@@ -94,6 +108,17 @@ export function EventsFilterBar({
           </div>
         </div>
       </div>
+
+      {hasActiveFilters && (
+        <button
+          type="button"
+          onClick={handleReset}
+          className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-brand-300 transition hover:text-white"
+        >
+          <RotateCcw size={13} />
+          {t("events.resetFilters")}
+        </button>
+      )}
     </div>
   );
 }
