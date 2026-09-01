@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 
 import { getEventById } from "@/api/events";
+import { EventDetailsSkeleton } from "@/components/events/EventDetailsSkeleton";
 import { Footer } from "@/components/layout/Footer";
 import { NavBar } from "@/components/layout/NavBar";
 import { RegistrationForm } from "@/components/registrations/RegistrationForm";
@@ -46,9 +47,7 @@ export function EventDetailsPage() {
           {t("eventDetails.backLink")}
         </Link>
 
-        {isLoading && (
-          <p className="py-12 text-center text-sm text-white/40">{t("eventDetails.loading")}</p>
-        )}
+        {isLoading && <EventDetailsSkeleton />}
 
         {isError && (
           <p role="alert" className="rounded-xl bg-danger-bg px-4 py-3 text-sm text-danger-text">

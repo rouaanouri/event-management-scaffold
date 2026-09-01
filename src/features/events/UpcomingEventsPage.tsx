@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import { getUpcomingEvents } from "@/api/events";
 import { EventCard } from "@/components/events/EventCard";
+import { EventCardSkeletonGrid } from "@/components/events/EventCardSkeleton";
 import { EventsFilterBar } from "@/components/events/EventsFilterBar";
 import { Footer } from "@/components/layout/Footer";
 import { NavBar } from "@/components/layout/NavBar";
@@ -60,9 +61,7 @@ export function UpcomingEventsPage() {
           onDateToChange={setDateTo}
         />
 
-        {isLoading && (
-          <p className="py-12 text-center text-sm text-white/40">{t("events.loading")}</p>
-        )}
+        {isLoading && <EventCardSkeletonGrid />}
 
         {isError && (
           <p role="alert" className="rounded-xl bg-danger-bg px-4 py-3 text-sm text-danger-text">

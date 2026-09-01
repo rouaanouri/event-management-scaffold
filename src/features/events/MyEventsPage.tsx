@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import { getAttendedEvents } from "@/api/events";
 import { Footer } from "@/components/layout/Footer";
+import { ListRowSkeletonGroup } from "@/components/layout/ListRowSkeleton";
 import { NavBar } from "@/components/layout/NavBar";
 import { getApiErrorMessage } from "@/lib/errors";
 import type { AttendedEventEntry } from "@/types";
@@ -33,9 +34,7 @@ export function MyEventsPage() {
           </p>
         )}
 
-        {isLoading && (
-          <p className="py-12 text-center text-sm text-white/40">{t("myEvents.loading")}</p>
-        )}
+        {isLoading && <ListRowSkeletonGroup />}
 
         {isError && (
           <p role="alert" className="rounded-xl bg-danger-bg px-4 py-3 text-sm text-danger-text">

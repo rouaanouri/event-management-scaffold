@@ -110,14 +110,16 @@ export function EventsFilterBar({
       </div>
 
       {hasActiveFilters && (
-        <button
-          type="button"
-          onClick={handleReset}
-          className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-brand-300 transition hover:text-white"
-        >
-          <RotateCcw size={13} />
-          {t("events.resetFilters")}
-        </button>
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="flex items-center gap-2 rounded-lg border border-surface-border px-3.5 py-2 text-sm font-semibold text-white/80 transition hover:border-danger-text/40 hover:bg-danger-bg hover:text-danger-text"
+          >
+            <RotateCcw size={15} />
+            {t("events.resetFilters")}
+          </button>
+        </div>
       )}
     </div>
   );

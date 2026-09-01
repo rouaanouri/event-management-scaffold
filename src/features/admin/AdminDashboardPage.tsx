@@ -5,10 +5,12 @@ import { useTranslation } from "react-i18next";
 
 import { deleteEvent, getAllEvents } from "@/api/admin";
 import { AdminEventRow } from "@/components/admin/AdminEventRow";
+import { AdminEventTable } from "@/components/admin/AdminEventTable";
 import { CreateEventForm } from "@/components/admin/CreateEventForm";
 import { EventAttendeesPanel } from "@/components/admin/EventAttendeesPanel";
 import { EventsFilterBar } from "@/components/events/EventsFilterBar";
 import { Footer } from "@/components/layout/Footer";
+import { ListRowSkeletonGroup } from "@/components/layout/ListRowSkeleton";
 import { NavBar } from "@/components/layout/NavBar";
 import { PaginationControls } from "@/components/layout/PaginationControls";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -137,9 +139,7 @@ export function AdminDashboardPage() {
           </p>
         )}
 
-        {isLoading && (
-          <p className="py-12 text-center text-sm text-white/40">{t("admin.loading")}</p>
-        )}
+        {isLoading && <ListRowSkeletonGroup />}
 
         {isError && (
           <p role="alert" className="rounded-xl bg-danger-bg px-4 py-3 text-sm text-danger-text">
@@ -153,7 +153,13 @@ export function AdminDashboardPage() {
 
         {!isLoading && !isError && result && result.items.length > 0 && (
           <>
-            <div className="space-y-3">
+            <AdminEventTable
+              events={result.items}
+              onViewAttendees={setSelectedEventId}
+              onDelete={handleDelete}
+            />
+
+            <div className="space-y-3 md:hidden">
               {result.items.map((event) => (
                 <AdminEventRow
                   key={event.id}
