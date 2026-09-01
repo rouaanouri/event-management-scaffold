@@ -1,16 +1,19 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, Layers, Plus } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { deleteEvent, getAllEvents } from "@/api/admin";
+import { getUpcomingEvents } from "@/api/events";
 import { AdminEventRow } from "@/components/admin/AdminEventRow";
 import { AdminEventTable } from "@/components/admin/AdminEventTable";
 import { CreateEventForm } from "@/components/admin/CreateEventForm";
 import { EventAttendeesPanel } from "@/components/admin/EventAttendeesPanel";
+import { EventsDonutChart } from "@/components/admin/EventsDonutChart";
 import { EventsFilterBar } from "@/components/events/EventsFilterBar";
 import { Footer } from "@/components/layout/Footer";
 import { ListRowSkeletonGroup } from "@/components/layout/ListRowSkeleton";
+import { Modal } from "@/components/layout/Modal";
 import { NavBar } from "@/components/layout/NavBar";
 import { PaginationControls } from "@/components/layout/PaginationControls";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -41,9 +44,24 @@ export function AdminDashboardPage() {
 
   const { data: result, isLoading, isError, error } = useQuery({
     queryKey: ["admin-events", queryParams],
-    queryFn: () => getAllEvents(queryParams),
+    queryFn: ({ signal }) => getAllEvents(queryParams, signal),
     placeholderData: (previousData) => previousData,
   });
+
+  const { data: upcomingResult } = useQuery({
+    queryKey: ["admin-upcoming-count"],
+    queryFn: ({ signal }) => getUpcomingEvents({ page: 1, limit: 1 }, signal),
+  });
+
+  const { data: allEventsForStats } = useQuery({
+    queryKey: ["admin-all-events-for-stats"],
+    queryFn: ({ signal }) => getAllEvents({ page: 1, limit: 100 }, signal),
+  });
+
+  const totalRegistrants = allEventsForStats?.items.reduce(
+    (sum, event) => sum + (event.registrationCount ?? 0),
+    0,
+  );
 
   function invalidateEventsQueries() {
     queryClient.invalidateQueries({ queryKey: ["admin-events"] });
@@ -69,41 +87,41 @@ export function AdminDashboardPage() {
           <h1 className="text-3xl font-extrabold text-white">{t("admin.pageTitle")}</h1>
           <button
             type="button"
-            onClick={() => setShowCreateForm((prev) => !prev)}
+            onClick={() => setShowCreateForm(true)}
             className="flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-600"
           >
             <Plus size={18} />
-            {showCreateForm ? t("admin.createToggleClose") : t("admin.createToggleOpen")}
+            {t("admin.createToggleOpen")}
           </button>
         </div>
 
-        {result && (
-          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex items-center gap-4 rounded-2xl border border-surface-border bg-surface-card p-5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300">
-                <Layers size={20} />
+        {result && upcomingResult && (
+          <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <EventsDonutChart
+              upcoming={upcomingResult.total}
+              past={Math.max(0, result.total - upcomingResult.total)}
+              upcomingLabel={t("admin.statUpcomingEvents")}
+              pastLabel={t("admin.statPastEvents")}
+            />
+            <div className="flex h-full items-center gap-5 rounded-2xl border border-surface-border bg-surface-card p-6">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-brand-500/15 text-brand-300">
+                <Users size={28} />
               </div>
               <div>
-                <p className="text-xs text-white/50">{t("admin.statTotalEvents")}</p>
-                <p className="text-xl font-bold text-white">{result.total}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 rounded-2xl border border-surface-border bg-surface-card p-5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300">
-                <CalendarDays size={20} />
-              </div>
-              <div>
-                <p className="text-xs text-white/50">{t("admin.statCurrentPage")}</p>
-                <p className="text-xl font-bold text-white">
-                  {t("admin.statPageOf", { page: result.page, total: result.totalPages })}
+                <p className="text-5xl font-extrabold text-white">
+                  {totalRegistrants !== undefined ? totalRegistrants : "—"}
                 </p>
+                <p className="mt-1 text-sm text-white/50">{t("admin.statTotalRegistrants")}</p>
               </div>
             </div>
           </div>
         )}
 
-        {showCreateForm && (
+        <Modal
+          isOpen={showCreateForm}
+          onClose={() => setShowCreateForm(false)}
+          title={t("admin.createFormTitle")}
+        >
           <CreateEventForm
             onCreated={() => {
               setShowCreateForm(false);
@@ -111,7 +129,7 @@ export function AdminDashboardPage() {
             }}
             onCancel={() => setShowCreateForm(false)}
           />
-        )}
+        </Modal>
 
         {selectedEventId !== null && (
           <EventAttendeesPanel

@@ -2,6 +2,7 @@ import { Trash2, Users } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
 import { getCapacityColor } from "@/lib/capacityColor";
 import type { EventItem } from "@/types";
 
@@ -26,9 +27,9 @@ export function AdminEventRow({ event, onViewAttendees, onDelete }: AdminEventRo
     setIsDeleting(true);
     try {
       await onDelete(event.id);
+      setConfirmingDelete(false);
     } finally {
       setIsDeleting(false);
-      setConfirmingDelete(false);
     }
   }
 
@@ -74,47 +75,31 @@ export function AdminEventRow({ event, onViewAttendees, onDelete }: AdminEventRo
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        {confirmingDelete ? (
-          <>
-            <span className="text-sm text-white/60">{t("admin.confirmDelete")}</span>
-            <button
-              type="button"
-              onClick={handleConfirmDelete}
-              disabled={isDeleting}
-              className="rounded-lg bg-danger-bg px-3 py-1.5 text-sm font-semibold text-danger-text disabled:opacity-60"
-            >
-              {isDeleting ? t("admin.deleting") : t("admin.confirmYes")}
-            </button>
-            <button
-              type="button"
-              onClick={() => setConfirmingDelete(false)}
-              disabled={isDeleting}
-              className="rounded-lg border border-surface-border px-3 py-1.5 text-sm text-white/70"
-            >
-              {t("admin.cancel")}
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              type="button"
-              onClick={() => onViewAttendees(event.id)}
-              className="flex items-center gap-1.5 rounded-lg border border-surface-border px-3 py-1.5 text-sm font-medium text-white/80 transition hover:border-brand-500 hover:text-white"
-            >
-              <Users size={15} />
-              {t("admin.viewAttendees")}
-            </button>
-            <button
-              type="button"
-              onClick={() => setConfirmingDelete(true)}
-              className="flex items-center gap-1.5 rounded-lg border border-danger-text/30 px-3 py-1.5 text-sm font-medium text-danger-text transition hover:bg-danger-bg"
-            >
-              <Trash2 size={15} />
-              {t("admin.delete")}
-            </button>
-          </>
-        )}
+        <button
+          type="button"
+          onClick={() => onViewAttendees(event.id)}
+          className="flex items-center gap-1.5 rounded-lg border border-surface-border px-3 py-1.5 text-sm font-medium text-white/80 transition hover:border-brand-500 hover:text-white"
+        >
+          <Users size={15} />
+          {t("admin.viewAttendees")}
+        </button>
+        <button
+          type="button"
+          onClick={() => setConfirmingDelete(true)}
+          className="flex items-center gap-1.5 rounded-lg border border-danger-text/30 px-3 py-1.5 text-sm font-medium text-danger-text transition hover:bg-danger-bg"
+        >
+          <Trash2 size={15} />
+          {t("admin.delete")}
+        </button>
       </div>
+
+      <DeleteConfirmModal
+        isOpen={confirmingDelete}
+        eventName={event.name}
+        isDeleting={isDeleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmingDelete(false)}
+      />
     </div>
   );
 }
