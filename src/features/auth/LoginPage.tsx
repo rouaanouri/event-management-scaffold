@@ -49,8 +49,11 @@ export function LoginPage() {
         return;
       }
 
+      const userRole = useAuthStore.getState().authUser?.role;
       const redirectTo =
-        (location.state as { from?: Location } | null)?.from?.pathname ?? "/";
+        userRole === "ADMIN"
+          ? "/admin"
+          : ((location.state as { from?: Location } | null)?.from?.pathname ?? "/");
       navigate(redirectTo, { replace: true });
     } catch (error) {
       setServerError(getApiErrorMessage(error));

@@ -7,6 +7,7 @@ import { getUpcomingEvents } from "@/api/events";
 import { EventCard } from "@/components/events/EventCard";
 import { EventCardSkeletonGrid } from "@/components/events/EventCardSkeleton";
 import { EventsFilterBar } from "@/components/events/EventsFilterBar";
+import { EventsHero } from "@/components/events/EventsHero";
 import { Footer } from "@/components/layout/Footer";
 import { NavBar } from "@/components/layout/NavBar";
 import { PaginationControls } from "@/components/layout/PaginationControls";
@@ -35,7 +36,7 @@ export function UpcomingEventsPage() {
 
   const { data: result, isLoading, isError, error } = useQuery({
     queryKey: ["upcoming-events", queryParams],
-    queryFn: () => getUpcomingEvents(queryParams),
+    queryFn: ({ signal }) => getUpcomingEvents(queryParams, signal),
     placeholderData: (previousData) => previousData,
   });
 
@@ -43,12 +44,7 @@ export function UpcomingEventsPage() {
     <div className="flex min-h-screen flex-col">
       <NavBar />
       <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
-        <h1 className="mb-2 text-3xl font-extrabold text-white">{t("events.pageTitle")}</h1>
-        {result && (
-          <p className="mb-6 text-sm text-white/50">
-            {t("events.summary", { count: result.total })}
-          </p>
-        )}
+        <EventsHero />
 
         <EventsFilterBar
           search={search}
@@ -60,6 +56,12 @@ export function UpcomingEventsPage() {
           dateTo={dateTo}
           onDateToChange={setDateTo}
         />
+
+        {result && (
+          <p className="mb-4 text-sm text-white/50">
+            {t("events.summary", { count: result.total })}
+          </p>
+        )}
 
         {isLoading && <EventCardSkeletonGrid />}
 

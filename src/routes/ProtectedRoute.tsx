@@ -13,7 +13,8 @@ export function ProtectedRoute({
   children,
   allowedRoles,
 }: ProtectedRouteProps) {
-  const { isAuthenticated, authUser } = useAuthStore();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const authUser = useAuthStore((s) => s.authUser);
   const location = useLocation();
 
   if (!isAuthenticated) {

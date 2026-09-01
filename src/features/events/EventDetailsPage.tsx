@@ -29,7 +29,7 @@ export function EventDetailsPage() {
 
   const { data: event, isLoading, isError, error } = useQuery({
     queryKey: ["event", eventId],
-    queryFn: () => getEventById(eventId),
+    queryFn: ({ signal }) => getEventById(eventId, signal),
     enabled: Number.isFinite(eventId),
   });
 

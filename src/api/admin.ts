@@ -23,10 +23,11 @@ function buildQueryParams(params: PaginationParams): Record<string, string> {
 
 export async function getAllEvents(
   params: PaginationParams,
+  signal?: AbortSignal,
 ): Promise<PaginatedResponse<EventItem>> {
   const { data } = await apiClient.get<PaginatedResponse<EventItem>>(
     "/events",
-    { params: buildQueryParams(params) },
+    { params: buildQueryParams(params), signal },
   );
   return data;
 }

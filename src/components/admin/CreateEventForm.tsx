@@ -90,10 +90,8 @@ export function CreateEventForm({ onCreated, onCancel }: CreateEventFormProps) {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="mb-6 space-y-4 rounded-2xl border border-surface-border bg-surface-card p-6"
+      className="space-y-4"
     >
-      <h2 className="text-lg font-bold text-white">{t("admin.createFormTitle")}</h2>
-
       <div>
         <label htmlFor="event-name" className={labelClass}>
           {t("admin.eventName")}

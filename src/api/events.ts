@@ -14,16 +14,17 @@ function buildQueryParams(params: PaginationParams): Record<string, string> {
 
 export async function getUpcomingEvents(
   params: PaginationParams,
+  signal?: AbortSignal,
 ): Promise<PaginatedResponse<EventItem>> {
   const { data } = await apiClient.get<PaginatedResponse<EventItem>>(
     "/events/upcoming",
-    { params: buildQueryParams(params) },
+    { params: buildQueryParams(params), signal },
   );
   return data;
 }
 
-export async function getEventById(id: number): Promise<EventItem> {
-  const { data } = await apiClient.get<EventItem>(`/events/${id}`);
+export async function getEventById(id: number, signal?: AbortSignal): Promise<EventItem> {
+  const { data } = await apiClient.get<EventItem>(`/events/${id}`, { signal });
   return data;
 }
 
