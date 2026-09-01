@@ -7,9 +7,10 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  maxWidth?: "max-w-lg" | "max-w-2xl" | "max-w-4xl";
 }
 
-export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, maxWidth = "max-w-lg" }: ModalProps) {
   useEffect(() => {
     if (!isOpen) return;
 
@@ -49,7 +50,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-surface-border bg-surface-card p-6 shadow-2xl"
+        className={`relative z-10 max-h-[90vh] w-full ${maxWidth} overflow-y-auto rounded-2xl border border-surface-border bg-surface-card p-6 shadow-2xl`}
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold text-white">{title}</h2>

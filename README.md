@@ -30,6 +30,7 @@ A web application for managing events, built with React and TypeScript, connecte
 | Localization | react-i18next (Arabic / English, with automatic RTL/LTR switching) |
 | Icons | lucide-react |
 | Font | Cairo (Arabic + Latin, via Google Fonts) |
+| PWA | vite-plugin-pwa (installable app with offline caching) |
 
 ## Setup Instructions
 
@@ -98,7 +99,10 @@ npm run preview
 
 Serves a local preview of the production build before actual deployment.
 
-**Deployment:** the project has not yet been deployed to a hosting platform (Vercel/Netlify). This remains one of the outstanding optional items.
+**Deployment:** the project is deployed and publicly accessible at:
+**[https://event-mangment-platform.netlify.app/admin]**
+
+The `public/_redirects` file handles SPA routing (ensures deep links like `/events/5` resolve correctly instead of returning a 404 on refresh, which Netlify requires explicitly for single-page apps).
 
 ## Project Structure
 
@@ -162,4 +166,5 @@ The project ships with oxlint only (the default configuration from the current V
 |---|---|
 | Arabic / English support (i18n) | Fully implemented — via react-i18next, with the selected language persisted in the browser and automatic RTL/LTR direction switching |
 | Bundle size reduction | Partially implemented — per-page code splitting (`React.lazy`) |
-| Deployment | Not yet implemented |
+| Deployment | Implemented — deployed on Netlify, see link above |
+| Installable PWA | Implemented — service worker, web manifest, and app icons via vite-plugin-pwa (not part of the original brief, added as a bonus) |

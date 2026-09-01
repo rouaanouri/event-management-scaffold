@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
 import { getCapacityColor } from "@/lib/capacityColor";
+import { formatEventDate, getCapacityRatio, isEventPast } from "@/lib/eventFormatting";
 import type { EventItem } from "@/types";
 
 interface AdminEventTableRowProps {
@@ -17,17 +18,11 @@ export function AdminEventTableRow({ event, onViewAttendees, onDelete }: AdminEv
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const isPast = new Date(event.event_date) < new Date();
-  const capacityRatio =
-    event.registrationCount !== undefined
-      ? Math.min(100, Math.round((event.registrationCount / event.max_attendees) * 100))
-      : null;
+  const isPast = isEventPast(event.event_date);
+  const capacityRatio = getCapacityRatio(event.registrationCount, event.max_attendees);
   const isFull = capacityRatio !== null && capacityRatio >= 100;
 
-  const formattedDate = new Date(event.event_date).toLocaleDateString(
-    i18n.language === "en" ? "en-US" : "ar-SA",
-    { year: "numeric", month: "short", day: "numeric" },
-  );
+  const formattedDate = formatEventDate(event.event_date, i18n.language);
 
   async function handleConfirmDelete() {
     setIsDeleting(true);

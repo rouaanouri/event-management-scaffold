@@ -13,12 +13,19 @@
   },
   "footer": {
     "brand": "Event Management System",
+    "home": "Home",
+    "contact": "Contact",
+    "whyDigit": "Why DIGIT?",
+    "apply": "Apply",
     "ctaTitle": "Get ready for your next step",
     "ctaSubtitle": "Join Digit's tech events and start your success story here.",
-    "tagline": "Digital incubator for the generation of innovative future"
+    "tagline": "Digital incubator for the generation of innovative future",
+    "rights": "All rights reserved."
   },
   "auth": {
     "loginTitle": "Log In",
+    "brandingTitle": "All your tech events, in one place",
+    "brandingSubtitle": "Browse upcoming events, register in seconds, and track your registration status.",
     "loginSubtitle": "Welcome back, enter your details to continue",
     "email": "Email",
     "password": "Password",
@@ -95,6 +102,12 @@
     "dateFromLabel": "From Date",
     "dateToLabel": "To Date",
     "resetFilters": "Reset",
+    "searchAndFilter": "Search & Filter",
+    "applyFilters": "Apply",
+    "statusLabel": "Status",
+    "statusAll": "All",
+    "statusActive": "Active",
+    "statusExpired": "Expired",
     "loading": "Loading events...",
     "empty": "No events match the current search criteria.",
     "maxAttendees": "Max attendees: {{count}}",

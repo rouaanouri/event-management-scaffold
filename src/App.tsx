@@ -52,7 +52,7 @@ function App() {
           <Route
             path="/events/:id"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["USER"]}>
                 <EventDetailsPage />
               </ProtectedRoute>
             }
@@ -61,7 +61,7 @@ function App() {
           <Route
             path="/my-events"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["USER"]}>
                 <MyEventsPage />
               </ProtectedRoute>
             }

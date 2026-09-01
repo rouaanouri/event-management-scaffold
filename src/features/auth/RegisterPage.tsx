@@ -103,8 +103,8 @@ export function RegisterPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="w-full max-w-2xl rounded-2xl border border-surface-border bg-surface-card/80 p-10 shadow-2xl backdrop-blur">
-        <h1 className="mb-2 text-3xl font-extrabold text-white">{t("auth.registerTitle")}</h1>
+      <div className="w-full max-w-xl rounded-2xl border border-surface-border bg-surface-card/80 p-7 shadow-2xl backdrop-blur">
+        <h1 className="mb-1.5 text-2xl font-extrabold text-white">{t("auth.registerTitle")}</h1>
         <p className="mb-8 text-base text-white/50">{t("auth.registerSubtitle")}</p>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-5">

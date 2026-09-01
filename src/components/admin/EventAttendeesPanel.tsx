@@ -8,10 +8,9 @@ import { getApiErrorMessage } from "@/lib/errors";
 
 interface EventAttendeesPanelProps {
   eventId: number;
-  onClose: () => void;
 }
 
-export function EventAttendeesPanel({ eventId, onClose }: EventAttendeesPanelProps) {
+export function EventAttendeesPanel({ eventId }: EventAttendeesPanelProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -30,18 +29,7 @@ export function EventAttendeesPanel({ eventId, onClose }: EventAttendeesPanelPro
   });
 
   return (
-    <div className="mb-6 rounded-2xl border border-surface-border bg-surface-card p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-white">{t("admin.attendeesTitle")}</h2>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-sm font-medium text-brand-300 hover:text-brand-100"
-        >
-          {t("admin.close")}
-        </button>
-      </div>
-
+    <div>
       {isLoading && (
         <p className="py-8 text-center text-sm text-white/40">{t("admin.attendeesLoading")}</p>
       )}

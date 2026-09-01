@@ -10,7 +10,7 @@ import { AdminEventTable } from "@/components/admin/AdminEventTable";
 import { CreateEventForm } from "@/components/admin/CreateEventForm";
 import { EventAttendeesPanel } from "@/components/admin/EventAttendeesPanel";
 import { EventsDonutChart } from "@/components/admin/EventsDonutChart";
-import { EventsFilterBar } from "@/components/events/EventsFilterBar";
+import { EventsFilterBar, type EventStatusFilter } from "@/components/events/EventsFilterBar";
 import { Footer } from "@/components/layout/Footer";
 import { ListRowSkeletonGroup } from "@/components/layout/ListRowSkeleton";
 import { Modal } from "@/components/layout/Modal";
@@ -30,7 +30,23 @@ export function AdminDashboardPage() {
   const [type, setType] = useState<EventType | "">("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [statusFilter, setStatusFilter] = useState<EventStatusFilter>("");
   const debouncedSearch = useDebouncedValue(search);
+
+  function handleStatusFilterChange(value: EventStatusFilter) {
+    setStatusFilter(value);
+    const today = new Date().toISOString().split("T")[0];
+    if (value === "active") {
+      setDateFrom(today);
+      setDateTo("");
+    } else if (value === "expired") {
+      setDateFrom("");
+      setDateTo(today);
+    } else {
+      setDateFrom("");
+      setDateTo("");
+    }
+  }
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
@@ -103,12 +119,13 @@ export function AdminDashboardPage() {
               upcomingLabel={t("admin.statUpcomingEvents")}
               pastLabel={t("admin.statPastEvents")}
             />
+
             <div className="flex h-full items-center gap-5 rounded-2xl border border-surface-border bg-surface-card p-6">
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-brand-500/15 text-brand-300">
                 <Users size={28} />
               </div>
               <div>
-                <p className="text-5xl font-extrabold text-white">
+                <p className="text-4xl font-extrabold text-white">
                   {totalRegistrants !== undefined ? totalRegistrants : "—"}
                 </p>
                 <p className="mt-1 text-sm text-white/50">{t("admin.statTotalRegistrants")}</p>
@@ -131,12 +148,14 @@ export function AdminDashboardPage() {
           />
         </Modal>
 
-        {selectedEventId !== null && (
-          <EventAttendeesPanel
-            eventId={selectedEventId}
-            onClose={() => setSelectedEventId(null)}
-          />
-        )}
+        <Modal
+          isOpen={selectedEventId !== null}
+          onClose={() => setSelectedEventId(null)}
+          title={t("admin.attendeesTitle")}
+          maxWidth="max-w-2xl"
+        >
+          {selectedEventId !== null && <EventAttendeesPanel eventId={selectedEventId} />}
+        </Modal>
 
         <EventsFilterBar
           search={search}
@@ -147,6 +166,8 @@ export function AdminDashboardPage() {
           onDateFromChange={setDateFrom}
           dateTo={dateTo}
           onDateToChange={setDateTo}
+          statusFilter={statusFilter}
+          onStatusFilterChange={handleStatusFilterChange}
         />
 
         <h2 className="mb-4 text-lg font-bold text-white/90">{t("admin.listTitle")}</h2>

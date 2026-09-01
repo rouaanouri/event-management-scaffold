@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { login } from "@/api/auth";
+import digitLogo from "@/assets/brand/digit-logo.png";
+import buildingDay from "@/assets/brand/building-day.jpg";
 import { getApiErrorMessage } from "@/lib/errors";
 import { validateEmail, validatePassword } from "@/lib/validation";
 import { useAuthStore } from "@/stores/authStore";
@@ -63,83 +65,99 @@ export function LoginPage() {
   }
 
   const inputClass =
-    "w-full rounded-xl border border-surface-border bg-surface-raised px-4 py-3.5 text-base text-white placeholder:text-white/30 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500";
-  const labelClass = "mb-2 block text-sm font-medium text-white/80";
+    "w-full rounded-xl border border-surface-border bg-surface-raised px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500";
+  const labelClass = "mb-1.5 block text-xs font-medium text-white/80";
   const errorClass = "mt-1.5 text-sm text-danger-text";
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-2xl border border-surface-border bg-surface-card/80 p-10 shadow-2xl backdrop-blur">
-        <h1 className="mb-2 text-3xl font-extrabold text-white">{t("auth.loginTitle")}</h1>
-        <p className="mb-8 text-base text-white/50">{t("auth.loginSubtitle")}</p>
-
-        <form onSubmit={handleSubmit} noValidate className="space-y-5">
-          <div>
-            <label htmlFor="email" className={labelClass}>
-              {t("auth.email")}
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputClass}
-              aria-invalid={Boolean(fieldErrors.email)}
-              aria-describedby={fieldErrors.email ? "email-error" : undefined}
+    <div className="flex min-h-screen items-center justify-center px-4 py-8">
+      <div className="grid w-full max-w-4xl grid-cols-1 overflow-hidden rounded-2xl border border-surface-border bg-surface-card/80 shadow-2xl backdrop-blur lg:grid-cols-2">
+        <div className="relative hidden flex-col overflow-hidden bg-gradient-to-br from-brand-600 to-brand-700 lg:flex">
+          <div className="relative h-64 w-full shrink-0">
+            <img src={buildingDay} alt="Digit" className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-700 via-brand-700/30 to-black/20" />
+            <img
+              src={digitLogo}
+              alt="Digit"
+              className="absolute right-6 top-6 h-9 w-auto brightness-0 invert"
             />
-            {fieldErrors.email && (
-              <p id="email-error" className={errorClass}>
-                {fieldErrors.email}
-              </p>
-            )}
           </div>
 
-          <div>
-            <label htmlFor="password" className={labelClass}>
-              {t("auth.password")}
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={inputClass}
-              aria-invalid={Boolean(fieldErrors.password)}
-              aria-describedby={
-                fieldErrors.password ? "password-error" : undefined
-              }
-            />
-            {fieldErrors.password && (
-              <p id="password-error" className={errorClass}>
-                {fieldErrors.password}
+          <div className="flex flex-1 flex-col justify-center p-9">
+            <h2 className="mb-2.5 text-2xl font-extrabold leading-snug text-white">
+              {t("auth.brandingTitle")}
+            </h2>
+            <p className="text-sm text-white/80">{t("auth.brandingSubtitle")}</p>
+          </div>
+        </div>
+
+        <div className="p-8 sm:p-10">
+          <h1 className="mb-1.5 text-2xl font-extrabold text-white">{t("auth.loginTitle")}</h1>
+          <p className="mb-7 text-sm text-white/50">{t("auth.loginSubtitle")}</p>
+
+          <form onSubmit={handleSubmit} noValidate className="space-y-5">
+            <div>
+              <label htmlFor="email" className={labelClass}>
+                {t("auth.email")}
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={inputClass}
+                aria-invalid={Boolean(fieldErrors.email)}
+                aria-describedby={fieldErrors.email ? "email-error" : undefined}
+              />
+              {fieldErrors.email && (
+                <p id="email-error" className={errorClass}>
+                  {fieldErrors.email}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="password" className={labelClass}>
+                {t("auth.password")}
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={inputClass}
+                aria-invalid={Boolean(fieldErrors.password)}
+                aria-describedby={fieldErrors.password ? "password-error" : undefined}
+              />
+              {fieldErrors.password && (
+                <p id="password-error" className={errorClass}>
+                  {fieldErrors.password}
+                </p>
+              )}
+            </div>
+
+            {serverError && (
+              <p role="alert" className="rounded-xl bg-danger-bg px-4 py-3 text-sm text-danger-text">
+                {serverError}
               </p>
             )}
-          </div>
 
-          {serverError && (
-            <p
-              role="alert"
-              className="rounded-xl bg-danger-bg px-4 py-3 text-sm text-danger-text"
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full rounded-xl bg-brand-500 py-3 text-base font-bold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {serverError}
-            </p>
-          )}
+              {isSubmitting ? t("auth.loginLoading") : t("auth.loginButton")}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full rounded-xl bg-brand-500 py-3.5 text-base font-bold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSubmitting ? t("auth.loginLoading") : t("auth.loginButton")}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-base text-white/50">
-          {t("auth.noAccount")}{" "}
-          <Link to="/register" className="font-semibold text-brand-300 hover:text-brand-100">
-            {t("auth.createAccount")}
-          </Link>
-        </p>
+          <p className="mt-6 text-center text-sm text-white/50">
+            {t("auth.noAccount")}{" "}
+            <Link to="/register" className="font-semibold text-brand-300 hover:text-brand-100">
+              {t("auth.createAccount")}
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

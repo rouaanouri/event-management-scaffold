@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ListRowSkeletonGroup } from "@/components/layout/ListRowSkeleton";
 import { NavBar } from "@/components/layout/NavBar";
 import { getApiErrorMessage } from "@/lib/errors";
+import { formatEventDate } from "@/lib/eventFormatting";
 import type { AttendedEventEntry } from "@/types";
 
 function registrationStatusClass(status: AttendedEventEntry["registrationStatus"]) {
@@ -57,10 +58,7 @@ export function MyEventsPage() {
         {!isLoading && !isError && entries && entries.length > 0 && (
           <div className="space-y-3">
             {entries.map((entry) => {
-              const formattedDate = new Date(entry.event.event_date).toLocaleDateString(
-                i18n.language === "en" ? "en-US" : "ar-SA",
-                { year: "numeric", month: "long", day: "numeric" },
-              );
+              const formattedDate = formatEventDate(entry.event.event_date, i18n.language);
 
               return (
                 <Link

@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, Presentation, Users, Video, Wrench } from "lucide-react";
+import { CalendarDays, Users } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
@@ -11,14 +11,10 @@ import { NavBar } from "@/components/layout/NavBar";
 import { RegistrationForm } from "@/components/registrations/RegistrationForm";
 import { getCapacityColor } from "@/lib/capacityColor";
 import { getApiErrorMessage } from "@/lib/errors";
+import { formatEventDate, getCapacityRatio, isEventPast } from "@/lib/eventFormatting";
 import { getEventImage } from "@/lib/eventImages";
+import { eventTypeIcons } from "@/lib/eventTypeIcons";
 import type { EventItem } from "@/types";
-
-const typeIcons: Record<EventItem["event_type"], typeof Presentation> = {
-  CONFERENCE: Presentation,
-  WEBINAR: Video,
-  WORKSHOP: Wrench,
-};
 
 export function EventDetailsPage() {
   const { t } = useTranslation();
@@ -35,8 +31,17 @@ export function EventDetailsPage() {
 
   function handleRegistrationSuccess() {
     setRegistrationSuccess(true);
+
+    queryClient.setQueryData<EventItem>(["event", eventId], (previous) =>
+      previous
+        ? { ...previous, registrationCount: (previous.registrationCount ?? 0) + 1 }
+        : previous,
+    );
+
     queryClient.invalidateQueries({ queryKey: ["event", eventId] });
     queryClient.invalidateQueries({ queryKey: ["attended-events"] });
+    queryClient.invalidateQueries({ queryKey: ["upcoming-events"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-events"] });
   }
 
   return (
@@ -80,19 +85,13 @@ function EventDetailsContent({
   onRegistrationSuccess,
 }: EventDetailsContentProps) {
   const { t, i18n } = useTranslation();
-  const isPast = new Date(event.event_date) < new Date();
-  const capacityRatio =
-    event.registrationCount !== undefined
-      ? Math.min(100, Math.round((event.registrationCount / event.max_attendees) * 100))
-      : null;
+  const isPast = isEventPast(event.event_date);
+  const capacityRatio = getCapacityRatio(event.registrationCount, event.max_attendees);
   const isFull = capacityRatio !== null && capacityRatio >= 100;
   const registrationDisabled = isPast || isFull;
-  const TypeIcon = typeIcons[event.event_type];
+  const TypeIcon = eventTypeIcons[event.event_type];
 
-  const formattedDate = new Date(event.event_date).toLocaleDateString(
-    i18n.language === "en" ? "en-US" : "ar-SA",
-    { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" },
-  );
+  const formattedDate = formatEventDate(event.event_date, i18n.language, true);
 
   return (
     <div className={`grid grid-cols-1 gap-8 lg:grid-cols-2 ${isPast ? "opacity-60" : ""}`}>
@@ -104,7 +103,10 @@ function EventDetailsContent({
           <span className="absolute left-4 top-4 rounded-full bg-brand-500/90 px-3 py-1 text-xs font-semibold text-white">
             {t(`eventTypes.${event.event_type}`)}
           </span>
-          <div className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-black/50 text-white backdrop-blur">
+          <div
+            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl border border-brand-500/30 bg-black/50 text-brand-300 backdrop-blur"
+            style={{ filter: "drop-shadow(0 0 6px rgba(139, 47, 214, 0.6))" }}
+          >
             <TypeIcon size={20} />
           </div>
         </div>

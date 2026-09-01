@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
 import { getCapacityColor } from "@/lib/capacityColor";
+import { formatEventDate, getCapacityRatio, isEventPast } from "@/lib/eventFormatting";
 import type { EventItem } from "@/types";
 
 interface AdminEventRowProps {
@@ -17,11 +18,9 @@ export function AdminEventRow({ event, onViewAttendees, onDelete }: AdminEventRo
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const isPast = new Date(event.event_date) < new Date();
-  const formattedDate = new Date(event.event_date).toLocaleDateString(
-    i18n.language === "en" ? "en-US" : "ar-SA",
-    { year: "numeric", month: "long", day: "numeric" },
-  );
+  const isPast = isEventPast(event.event_date);
+  const formattedDate = formatEventDate(event.event_date, i18n.language);
+  const capacityRatio = getCapacityRatio(event.registrationCount, event.max_attendees);
 
   async function handleConfirmDelete() {
     setIsDeleting(true);
@@ -59,15 +58,13 @@ export function AdminEventRow({ event, onViewAttendees, onDelete }: AdminEventRo
             {event.registrationCount ?? "—"} / {event.max_attendees}
           </span>
         </div>
-        {event.registrationCount !== undefined && (
+        {capacityRatio !== null && (
           <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-white/10">
             <div
               className="h-full rounded-full transition-all"
               style={{
-                width: `${Math.min(100, Math.round((event.registrationCount / event.max_attendees) * 100))}%`,
-                backgroundColor: getCapacityColor(
-                  Math.round((event.registrationCount / event.max_attendees) * 100),
-                ),
+                width: `${capacityRatio}%`,
+                backgroundColor: getCapacityColor(capacityRatio),
               }}
             />
           </div>
