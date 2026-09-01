@@ -10,6 +10,7 @@ export function SiteBackdrop() {
         backgroundSize: "cover",
         backgroundPosition: "center top",
         backgroundRepeat: "no-repeat",
+        filter: "brightness(1.3) saturate(1.1)",
       }}
     />
   );

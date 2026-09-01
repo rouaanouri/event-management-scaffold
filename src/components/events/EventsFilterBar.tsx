@@ -48,8 +48,8 @@ export function EventsFilterBar({
 
   return (
     <div className="mb-6 rounded-2xl border border-surface-border bg-surface-raised/40 p-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="lg:col-span-2">
+      <div className="flex flex-wrap items-end gap-4">
+        <div className="min-w-[200px] flex-1">
           <label htmlFor="search" className={labelClass}>
             {t("events.searchLabel")}
           </label>
@@ -63,7 +63,7 @@ export function EventsFilterBar({
           />
         </div>
 
-        <div>
+        <div className="w-40">
           <label htmlFor="event-type" className={labelClass}>
             {t("events.typeLabel")}
           </label>
@@ -81,46 +81,48 @@ export function EventsFilterBar({
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <label htmlFor="date-from" className={labelClass}>
-              {t("events.dateFromLabel")}
-            </label>
-            <input
-              id="date-from"
-              type="date"
-              value={dateFrom}
-              onChange={(e) => onDateFromChange(e.target.value)}
-              className={inputClass}
-            />
-          </div>
-          <div>
-            <label htmlFor="date-to" className={labelClass}>
-              {t("events.dateToLabel")}
-            </label>
-            <input
-              id="date-to"
-              type="date"
-              value={dateTo}
-              onChange={(e) => onDateToChange(e.target.value)}
-              className={inputClass}
-            />
-          </div>
+        <div className="w-36">
+          <label htmlFor="date-from" className={labelClass}>
+            {t("events.dateFromLabel")}
+          </label>
+          <input
+            id="date-from"
+            type="date"
+            value={dateFrom}
+            onChange={(e) => onDateFromChange(e.target.value)}
+            className={inputClass}
+          />
         </div>
-      </div>
 
-      {hasActiveFilters && (
-        <div className="mt-3">
+        <div className="w-36">
+          <label htmlFor="date-to" className={labelClass}>
+            {t("events.dateToLabel")}
+          </label>
+          <input
+            id="date-to"
+            type="date"
+            value={dateTo}
+            onChange={(e) => onDateToChange(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+
+        <div>
+          <span className="mb-1.5 block text-xs font-medium text-transparent" aria-hidden="true">
+            .
+          </span>
           <button
             type="button"
             onClick={handleReset}
-            className="flex items-center gap-2 rounded-lg border border-surface-border px-3.5 py-2 text-sm font-semibold text-white/80 transition hover:border-danger-text/40 hover:bg-danger-bg hover:text-danger-text"
+            disabled={!hasActiveFilters}
+            title={t("events.resetFilters")}
+            aria-label={t("events.resetFilters")}
+            className="flex h-[42px] w-[42px] items-center justify-center rounded-xl border border-surface-border text-white/70 transition hover:border-danger-text/40 hover:bg-danger-bg hover:text-danger-text disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-surface-border disabled:hover:bg-transparent disabled:hover:text-white/70"
           >
-            <RotateCcw size={15} />
-            {t("events.resetFilters")}
+            <RotateCcw size={16} />
           </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }

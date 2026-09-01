@@ -1,4 +1,4 @@
-import { Presentation, Video, Wrench } from "lucide-react";
+import { CalendarDays, Presentation, Users, Video, Wrench } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { getCapacityColor } from "@/lib/capacityColor";
@@ -37,8 +37,8 @@ export function EventCard({ event, onViewDetails }: EventCardProps) {
 
   return (
     <article
-      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition ${
-        isDisabled ? "opacity-60" : "hover:border-brand-500/50"
+      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-all duration-200 ${
+        isDisabled ? "opacity-60" : "hover:-translate-y-1 hover:scale-[1.015] hover:border-brand-500/50 hover:shadow-xl hover:shadow-black/30"
       }`}
     >
       <div
@@ -47,44 +47,51 @@ export function EventCard({ event, onViewDetails }: EventCardProps) {
       >
         <div className="absolute inset-0 bg-gradient-to-t from-surface-card via-transparent to-transparent" />
 
+        <span className="absolute left-3 top-3 rounded-full bg-brand-500/90 px-3 py-1 text-xs font-semibold text-white">
+          {t(`eventTypes.${event.event_type}`)}
+        </span>
         <div className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-black/50 text-white backdrop-blur">
           <TypeIcon size={18} />
         </div>
 
         {isPast && (
-          <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white/70">
+          <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white/70">
             {t("events.expiredBadge")}
           </span>
         )}
         {!isPast && isFull && (
-          <span className="absolute left-3 top-3 rounded-full bg-danger-bg px-3 py-1 text-xs font-semibold text-danger-text">
+          <span className="absolute bottom-3 left-3 rounded-full bg-danger-bg px-3 py-1 text-xs font-semibold text-danger-text">
             {t("events.fullBadge")}
           </span>
         )}
       </div>
 
       <div className="flex flex-1 flex-col p-6">
-        <div className="mb-3 flex items-start justify-between gap-3">
-          <h3 className="text-lg font-bold text-white">{event.name}</h3>
-          <span className="shrink-0 rounded-full bg-brand-500/15 px-3 py-1 text-xs font-semibold text-brand-300">
-            {t(`eventTypes.${event.event_type}`)}
-          </span>
-        </div>
+        <h3 className="mb-2 text-lg font-bold text-white">{event.name}</h3>
 
-        <p className="mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-white/60">
+        <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-white/60">
           {event.description}
         </p>
 
-        <div className="mb-3 flex items-center justify-between text-sm text-white/40">
-          <span>{formattedDate}</span>
-          <span>{t("events.maxAttendees", { count: event.max_attendees })}</span>
+        <div className="mb-4 space-y-2 text-sm text-white/50">
+          <div className="flex items-center gap-2">
+            <CalendarDays size={15} className="shrink-0 text-white/30" />
+            <span>{formattedDate}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Users size={15} className="shrink-0 text-white/30" />
+            <span dir="ltr" className="inline-block">
+              {event.registrationCount ?? 0} / {event.max_attendees}
+            </span>
+            <span>{t("events.seatsLabel")}</span>
+          </div>
         </div>
 
         {capacityRatio !== null && (
           <div className="mb-5">
             <div className="mb-1.5 flex items-center justify-between text-xs text-white/40">
               <span>{capacityRatio}%</span>
-              <span>{t("events.registeredCount", { count: event.registrationCount })}</span>
+              <span>{t("events.capacityLabel")}</span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
               <div
