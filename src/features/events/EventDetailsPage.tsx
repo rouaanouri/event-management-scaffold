@@ -13,7 +13,6 @@ import { getCapacityColor } from "@/lib/capacityColor";
 import { getApiErrorMessage } from "@/lib/errors";
 import { formatEventDate, getCapacityRatio, isEventPast } from "@/lib/eventFormatting";
 import { getEventImage } from "@/lib/eventImages";
-import { eventTypeIcons } from "@/lib/eventTypeIcons";
 import type { EventItem } from "@/types";
 
 export function EventDetailsPage() {
@@ -89,7 +88,6 @@ function EventDetailsContent({
   const capacityRatio = getCapacityRatio(event.registrationCount, event.max_attendees);
   const isFull = capacityRatio !== null && capacityRatio >= 100;
   const registrationDisabled = isPast || isFull;
-  const TypeIcon = eventTypeIcons[event.event_type];
 
   const formattedDate = formatEventDate(event.event_date, i18n.language, true);
 
@@ -103,12 +101,6 @@ function EventDetailsContent({
           <span className="absolute left-4 top-4 rounded-full bg-brand-500/90 px-3 py-1 text-xs font-semibold text-white">
             {t(`eventTypes.${event.event_type}`)}
           </span>
-          <div
-            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl border border-brand-500/30 bg-black/50 text-brand-300 backdrop-blur"
-            style={{ filter: "drop-shadow(0 0 6px rgba(139, 47, 214, 0.6))" }}
-          >
-            <TypeIcon size={20} />
-          </div>
         </div>
 
         <div className="mb-2 flex flex-wrap gap-2">

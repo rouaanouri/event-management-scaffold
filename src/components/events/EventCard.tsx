@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { getCapacityColor } from "@/lib/capacityColor";
 import { formatEventDate, getCapacityRatio, isEventPast } from "@/lib/eventFormatting";
 import { getEventImage } from "@/lib/eventImages";
-import { eventTypeIcons } from "@/lib/eventTypeIcons";
 import type { EventItem } from "@/types";
 
 interface EventCardProps {
@@ -19,7 +18,6 @@ export function EventCard({ event, onViewDetails }: EventCardProps) {
   const isFull = capacityRatio !== null && capacityRatio >= 100;
   const isDisabled = isPast || isFull;
 
-  const TypeIcon = eventTypeIcons[event.event_type];
   const formattedDate = formatEventDate(event.event_date, i18n.language);
 
   return (
@@ -37,12 +35,6 @@ export function EventCard({ event, onViewDetails }: EventCardProps) {
         <span className="absolute left-3 top-3 rounded-full bg-brand-500/90 px-3 py-1 text-xs font-semibold text-white">
           {t(`eventTypes.${event.event_type}`)}
         </span>
-        <div
-          className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl border border-brand-500/30 bg-black/50 text-brand-300 backdrop-blur"
-          style={{ filter: "drop-shadow(0 0 6px rgba(139, 47, 214, 0.6))" }}
-        >
-          <TypeIcon size={18} />
-        </div>
 
         {isPast && (
           <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white/70">
